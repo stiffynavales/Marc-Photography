@@ -1,0 +1,35 @@
+# Implementation Plan - Inquire & Booking Functions
+
+This plan outlines the implementation of the new functional integrations for the portfolio website: the **Inquire** (Contact) form and the **Book Now** widget.
+
+## User Review Required
+> [!IMPORTANT]
+> To proceed with this implementation, I will need some configuration details from you:
+> 1. **Contact Form Service**: I propose using **Web3Forms** (easiest, just requires your email) or **EmailJS** (requires free account). Which do you prefer? If Web3Forms, please provide the email address you want to receive inquiries at.
+> 2. **Booking Service**: I propose using **Calendly** via their official React component (`react-calendly`), which opens a sleek popup directly on the site. Please provide your **Calendly Username/Link** (e.g., `calendly.com/your-username`).
+
+## Proposed Changes
+
+### 1. Inquire Function (Contact Form)
+We will implement a clean, minimalist contact modal or section that matches the dark, premium aesthetic of the site.
+#### [MODIFY] [App.jsx](file:///c:/Users/Stiffy/Downloads/MP%20Website/src/App.jsx)
+- **Component**: Create a new `<ContactSection id="contact">` or `<ContactModal>` component.
+- **Fields**: Name, Email, Phone, Event Date (optional), Vision (textarea).
+- **Integration**: Link the `onSubmit` handler to the chosen email service API (e.g., Web3Forms). It will send the form data directly to your inbox without requiring a backend.
+- **Trigger**: The "Inquire Now" button in the `<Navbar>` will be updated to open the modal or scroll smoothly to the new Contact section.
+
+### 2. Book Now Function (Booking Widget)
+We will integrate a seamless third-party scheduling popup using the existing button in your "Ready for Deployment" Membership section.
+#### [MODIFY] [App.jsx](file:///c:/Users/Stiffy/Downloads/MP%20Website/src/App.jsx)
+- **Integration**: Install `react-calendly` (or embed Acuity/Honeybook if you prefer).
+- **Trigger**: Update the "Book Now" `<button>` in the `<Membership>` component to trigger the Calendly popup widget.
+- **Workflow**: When clicked, a calendar modal will appear over your website, allowing users to pick a time, enter details, and confirm their booking flawlessly without leaving the page.
+
+## Verification Plan
+
+### Automated Tests
+- Test form validation (required fields).
+
+### Manual Verification
+- **Inquire**: Submit test inquiries and verify they are delivered to your email inbox.
+- **Book Now**: Click the "Book Now" button to verify the booking widget opens correctly and displays availability.
