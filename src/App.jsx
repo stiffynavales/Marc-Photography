@@ -636,7 +636,7 @@ const Membership = () => {
             </div>
             {typeof window !== 'undefined' && document.getElementById('root') && (
               <PopupModal
-                url="https://calendly.com/stiffy-navales1994"
+                url="https://calendly.com/stiffy-navales1994/event-booking"
                 onModalClose={() => setIsCalendlyOpen(false)}
                 open={isCalendlyOpen}
                 rootElement={document.getElementById("root")}
