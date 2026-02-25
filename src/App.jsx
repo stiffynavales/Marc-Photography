@@ -143,8 +143,9 @@ const ContactModal = ({ isOpen, onClose }) => {
     setResult("Sending...");
     const formData = new FormData(event.target);
 
-    // Replace with configured Web3Forms access key
-    formData.append("access_key", "YOUR_WEB3FORMS_ACCESS_KEY_HERE");
+    // Replace with configured Web3Forms access key from environment variables
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "YOUR_WEB3FORMS_ACCESS_KEY_HERE";
+    formData.append("access_key", accessKey);
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
