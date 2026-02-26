@@ -895,7 +895,14 @@ const Philosophy = () => {
   );
 };
 
-const ProtocolStep = ({ number, title, subtitle, description, isActive }) => {
+const ProtocolStep = ({
+  number,
+  title,
+  subtitle,
+  description,
+  isActive,
+  image,
+}) => {
   return (
     <div
       className={`stack-card transition-all duration-700 ${isActive ? "scale-100 opacity-100" : "scale-95 opacity-50"}`}
@@ -922,18 +929,16 @@ const ProtocolStep = ({ number, title, subtitle, description, isActive }) => {
           </div>
         </div>
 
-        <div className="flex-1 bg-dark/5 rounded-[2rem] border border-dark/5 relative overflow-hidden flex items-center justify-center p-12">
-          <div className="absolute top-0 right-0 p-8">
-            <Clock size={20} className="text-dark/10" />
+        <div className="flex-1 rounded-[2rem] border border-dark/5 relative overflow-hidden flex items-center justify-center p-0">
+          <img src={image} alt={title} className="w-full h-full object-cover" />
+          <div className="absolute top-0 right-0 p-8 z-10">
+            <Clock size={20} className="text-offwhite/50" />
           </div>
-          <div className="text-8xl font-sans font-bold text-dark/5 select-none">
-            {number}
-          </div>
-          <div className="absolute bottom-12 left-12 flex flex-col gap-4">
-            <div className="w-48 h-1 bg-dark/10 rounded-full overflow-hidden">
+          <div className="absolute bottom-12 left-12 flex flex-col gap-4 z-10">
+            <div className="w-48 h-1 bg-offwhite/30 rounded-full overflow-hidden backdrop-blur-sm">
               <div className="w-1/2 h-full bg-signal"></div>
             </div>
-            <div className="text-[10px] font-mono text-dark/20 uppercase tracking-widest">
+            <div className="text-[10px] font-mono text-offwhite/80 uppercase tracking-widest bg-dark/20 px-2 py-1 backdrop-blur-sm rounded self-start">
               Syncing Data... 0{number}.00
             </div>
           </div>
@@ -968,6 +973,7 @@ const Protocol = () => {
             subtitle="The Blueprint"
             description="Deep consultation to map out the narrative of your event. We don't just show up; we architect the vision."
             isActive={true}
+            image="/protoc-1.jpg"
           />
           <ProtocolStep
             number="02"
@@ -975,6 +981,7 @@ const Protocol = () => {
             subtitle="The Execution"
             description="Precision production using industry-grade optics. High-velocity capture for high-stakes moments."
             isActive={true}
+            image="/protoc-2.jpg"
           />
           <ProtocolStep
             number="03"
@@ -982,6 +989,7 @@ const Protocol = () => {
             subtitle="The Transmission"
             description="Same-day edits and high-fidelity archival. Your memories, transmitted with zero latency."
             isActive={true}
+            image="/protoc-3.jpg"
           />
         </div>
       </div>
