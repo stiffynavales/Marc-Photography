@@ -418,7 +418,7 @@ const FeatureCard = ({ title, description, icon: Icon, type, bgImage }) => {
             <img
               src={bgImage}
               alt={title}
-              className="w-full h-full object-cover opacity-50 group-hover:scale-110 transition-transform duration-700 ease-out grayscale group-hover:grayscale-0"
+              className="w-full h-full object-cover opacity-50 md:grayscale md:group-hover:grayscale-0 md:group-hover:scale-110 transition-transform duration-700 ease-out"
             />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/40 to-transparent z-1"></div>
@@ -426,7 +426,7 @@ const FeatureCard = ({ title, description, icon: Icon, type, bgImage }) => {
       )}
 
       <div className="relative z-10">
-        <div className="absolute top-0 right-0 p-8 text-offwhite/5 group-hover:text-signal/10 transition-colors">
+        <div className="absolute top-0 right-0 p-8 text-signal/10 md:text-offwhite/5 md:group-hover:text-signal/10 transition-colors">
           <Icon size={120} strokeWidth={1} />
         </div>
 
@@ -853,11 +853,11 @@ const PortfolioItem = ({ title, category, image, video, span = 'col-span-1', onS
               loop
               muted
               playsInline
-              className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 ease-out"
+              className="w-full h-full object-cover opacity-60 md:group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             <button
               onClick={togglePlay}
-              className="absolute top-6 right-6 z-30 w-12 h-12 rounded-full bg-dark/50 backdrop-blur-md flex items-center justify-center text-offwhite border border-white/10 hover:bg-signal transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
+              className="absolute top-6 right-6 z-30 w-12 h-12 rounded-full bg-dark/50 backdrop-blur-md flex items-center justify-center text-offwhite border border-white/10 hover:bg-signal transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
             >
               {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-1" />}
             </button>
@@ -866,7 +866,7 @@ const PortfolioItem = ({ title, category, image, video, span = 'col-span-1', onS
           <img
             src={image}
             alt={title}
-            className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 ease-out grayscale group-hover:grayscale-0"
+            className="w-full h-full object-cover opacity-60 md:grayscale md:group-hover:grayscale-0 md:group-hover:scale-105 transition-transform duration-700 ease-out"
           />
         )}
       </div>
@@ -876,10 +876,10 @@ const PortfolioItem = ({ title, category, image, video, span = 'col-span-1', onS
 
       {/* Text Content - Disable pointer events on the container to prevent blocking the button */}
       <div className="absolute bottom-0 left-0 p-6 md:p-12 z-20 pointer-events-none w-full">
-        <div className="text-signal font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3em] mb-2 md:mb-4 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+        <div className="text-signal font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3em] mb-2 md:mb-4 opacity-100 translate-y-0 md:opacity-0 md:group-hover:opacity-100 transform md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500">
           {category}
         </div>
-        <h3 className="text-offwhite text-xl md:text-3xl font-sans font-bold uppercase tracking-tighter transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75 pr-4 truncate whitespace-normal line-clamp-2 md:line-clamp-none">
+        <h3 className="text-offwhite text-xl md:text-3xl font-sans font-bold uppercase tracking-tighter transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500 delay-75 pr-4 truncate whitespace-normal line-clamp-2 md:line-clamp-none">
           {title}
         </h3>
       </div>
