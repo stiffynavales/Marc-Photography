@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Camera, Video, MessageSquare, Play, Pause, ArrowRight, Instagram, Facebook, Mail, Clock, LayoutGrid, Calendar, Menu, X } from 'lucide-react';
+import { Camera, Video, MessageSquare, Play, ArrowRight, Instagram, Facebook, Mail, Clock, Calendar, Menu, X } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -145,6 +145,7 @@ const ContactModal = ({ isOpen, onClose }) => {
     // Replace with configured Web3Forms access key from environment variables
     const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "YOUR_WEB3FORMS_ACCESS_KEY_HERE";
     formData.append("access_key", accessKey);
+    formData.append("subject", "New Inquiry Request");
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -164,7 +165,7 @@ const ContactModal = ({ isOpen, onClose }) => {
       } else {
         setResult(data.message);
       }
-    } catch (error) {
+    } catch {
       setResult("Submission failed. Please try again.");
     }
   };
@@ -193,12 +194,8 @@ const ContactModal = ({ isOpen, onClose }) => {
             <input type="text" name="name" placeholder="FULL NAME *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
             <input type="email" name="email" placeholder="EMAIL ADDRESS *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             <input type="tel" name="phone" placeholder="PHONE NUMBER" className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
-            <div className="relative border-b border-white/20 pb-2">
-              <span className="absolute left-0 top-0 text-offwhite/30 font-sans text-sm pointer-events-none">EVENT DATE</span>
-              <input type="date" name="date" className="bg-transparent w-full text-offwhite font-sans focus:outline-none focus:border-signal transition-colors opacity-0 focus:opacity-100 [&:not(:placeholder-shown)]:opacity-100" />
-            </div>
           </div>
           <textarea name="vision" placeholder="TELL US ABOUT YOUR VISION *" required rows={4} className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors resize-none mt-4"></textarea>
 
@@ -243,7 +240,7 @@ const PencilModal = ({ isOpen, onClose }) => {
       } else {
         setResult(data.message);
       }
-    } catch (error) {
+    } catch {
       setResult("Submission failed. Please try again.");
     }
   };
@@ -272,11 +269,18 @@ const PencilModal = ({ isOpen, onClose }) => {
             <input type="text" name="name" placeholder="FULL NAME *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
             <input type="email" name="email" placeholder="EMAIL ADDRESS *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
             <input type="tel" name="phone" placeholder="PHONE NUMBER *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
-            <div className="relative border-b border-white/20 pb-2">
-              <span className="absolute left-0 top-0 text-offwhite/30 font-sans text-sm pointer-events-none">PREFERRED DATE *</span>
-              <input type="date" name="preferred_date" required className="bg-transparent w-full text-offwhite font-sans focus:outline-none focus:border-signal transition-colors opacity-0 focus:opacity-100 [&:not(:placeholder-shown)]:opacity-100" />
+            <div className="relative border-b border-white/20 pb-2 group">
+              <span className="absolute left-0 top-0 text-offwhite/30 font-sans text-sm pointer-events-none transition-colors group-focus-within:text-signal">PREFERRED DATE *</span>
+              <Calendar className="absolute right-0 bottom-2 text-offwhite/30 group-focus-within:text-signal pointer-events-none transition-colors" size={18} />
+              <input
+                type="date"
+                name="preferred_date"
+                required
+                style={{ colorScheme: 'dark' }}
+                className="bg-transparent w-full pt-6 text-offwhite font-sans focus:outline-none transition-colors cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+              />
             </div>
           </div>
           <div className="relative border-b border-white/20 pb-2 mt-4">
@@ -310,7 +314,6 @@ const Hero = ({
   showButton = true
 }) => {
   const containerRef = useRef(null);
-  const textRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -404,6 +407,7 @@ const Hero = ({
   );
 };
 
+// eslint-disable-next-line no-unused-vars
 const FeatureCard = ({ title, description, icon: Icon, type, bgImage }) => {
   return (
     <div className="group relative bg-dark rounded-large p-10 border border-white/10 hover:border-signal/30 transition-all duration-500 hover:shadow-2xl overflow-hidden min-h-[400px] h-full flex flex-col justify-between">
