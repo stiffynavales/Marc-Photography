@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Camera, Video, MessageSquare, Play, Pause, ArrowRight, Instagram, Facebook, Mail, Clock, LayoutGrid, Calendar, Menu, X } from 'lucide-react';
-import { PopupModal } from "react-calendly";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -205,6 +203,95 @@ const ContactModal = ({ isOpen, onClose }) => {
 
           <button type="submit" className="bg-signal text-dark px-8 py-4 rounded-full font-sans font-bold text-sm uppercase tracking-widest hover:bg-offwhite transition-colors mt-4 self-start">
             Submit Inquiry
+          </button>
+        </form>
+        {result && <span className="text-signal font-mono text-xs uppercase tracking-widest mt-6 block">{result}</span>}
+      </div>
+    </div>
+  );
+};
+
+const PencilModal = ({ isOpen, onClose }) => {
+  const [result, setResult] = useState("");
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    setResult("Sending...");
+    const formData = new FormData(event.target);
+
+    // Replace with configured Web3Forms access key from environment variables
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "YOUR_WEB3FORMS_ACCESS_KEY_HERE";
+    formData.append("access_key", accessKey);
+    formData.append("subject", "New Pencil Booking Request");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setResult("Date securely penciled in. We will be in touch shortly.");
+        event.target.reset();
+        setTimeout(() => {
+          onClose();
+          setResult("");
+        }, 3000);
+      } else {
+        setResult(data.message);
+      }
+    } catch (error) {
+      setResult("Submission failed. Please try again.");
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-dark/95 backdrop-blur-sm p-4">
+      <div className="absolute inset-0" onClick={onClose}></div>
+      <div className="relative bg-dark border border-white/10 p-8 md:p-12 rounded-[2rem] w-full max-w-2xl shadow-2xl">
+        <button
+          onClick={onClose}
+          className="absolute top-6 right-6 text-offwhite/50 hover:text-signal transition-colors p-2"
+        >
+          <X size={24} />
+        </button>
+        <h2 className="text-offwhite text-3xl md:text-5xl font-sans font-bold uppercase tracking-tighter mb-2">
+          Pencil <span className="text-signal italic">Booking.</span>
+        </h2>
+        <p className="text-offwhite/50 font-mono text-xs uppercase tracking-widest mb-8">
+          Select your preferred event date to secure your slot.
+        </p>
+
+        <form onSubmit={onSubmit} className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <input type="text" name="name" placeholder="FULL NAME *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
+            <input type="email" name="email" placeholder="EMAIL ADDRESS *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <input type="tel" name="phone" placeholder="PHONE NUMBER *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
+            <div className="relative border-b border-white/20 pb-2">
+              <span className="absolute left-0 top-0 text-offwhite/30 font-sans text-sm pointer-events-none">PREFERRED DATE *</span>
+              <input type="date" name="preferred_date" required className="bg-transparent w-full text-offwhite font-sans focus:outline-none focus:border-signal transition-colors opacity-0 focus:opacity-100 [&:not(:placeholder-shown)]:opacity-100" />
+            </div>
+          </div>
+          <div className="relative border-b border-white/20 pb-2 mt-4">
+            <select name="event_type" required className="bg-dark w-full text-offwhite font-sans focus:outline-none focus:border-signal transition-colors appearance-none cursor-pointer">
+              <option value="" disabled selected className="text-offwhite/30">SELECT EVENT TYPE *</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Debut">Debut</option>
+              <option value="Prenup">Prenup / Engagement</option>
+              <option value="Corporate">Corporate / Brand Event</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <textarea name="details" placeholder="ANY ADDITIONAL DETAILS?" rows={3} className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors resize-none mt-4"></textarea>
+
+          <button type="submit" className="bg-signal text-dark px-8 py-4 rounded-full font-sans font-bold text-sm uppercase tracking-widest hover:bg-offwhite transition-colors mt-4 self-start">
+            Secure Date
           </button>
         </form>
         {result && <span className="text-signal font-mono text-xs uppercase tracking-widest mt-6 block">{result}</span>}
@@ -583,7 +670,7 @@ const Protocol = () => {
 
 const Membership = () => {
   const containerRef = useRef(null);
-  const [isCalendlyOpen, setIsCalendlyOpen] = useState(false);
+  const [isPencilOpen, setIsPencilOpen] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -628,20 +715,13 @@ const Membership = () => {
             </p>
             <div className="membership-reveal">
               <button
-                onClick={() => setIsCalendlyOpen(true)}
+                onClick={() => setIsPencilOpen(true)}
                 className="bg-signal text-offwhite px-8 md:px-12 py-4 md:py-6 rounded-full font-sans font-bold text-base md:text-lg uppercase tracking-widest hover:bg-offwhite hover:text-dark transition-colors flex items-center gap-4"
               >
                 Book Now <Play size={20} fill="currentColor" />
               </button>
             </div>
-            {typeof window !== 'undefined' && document.getElementById('root') && (
-              <PopupModal
-                url="https://calendly.com/stiffy-navales1994/event-booking"
-                onModalClose={() => setIsCalendlyOpen(false)}
-                open={isCalendlyOpen}
-                rootElement={document.getElementById("root")}
-              />
-            )}
+            <PencilModal isOpen={isPencilOpen} onClose={() => setIsPencilOpen(false)} />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
