@@ -1,136 +1,307 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Camera, Video, MessageSquare, Play, Pause, ArrowRight, Instagram, Facebook, Mail, Clock, Calendar, Menu, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from "react";
+// Removed react-router-dom imports as it's a single page now
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  Camera,
+  Video,
+  MessageSquare,
+  Play,
+  Pause,
+  ArrowRight,
+  Instagram,
+  Facebook,
+  Mail,
+  Clock,
+  Calendar,
+  Menu,
+  X,
+} from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Navbar = () => {
+// Removed placeholders
+const Navbar = ({ isPreloadComplete = true, onContactClick }) => {
   const navRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [isContactOpen, setIsContactOpen] = useState(false);
-  const location = useLocation();
-  const isHome = location.pathname === '/';
+  const [isScrolled, setIsScrolled] = useState(false);
+  const isHome = true; // Always true for single page app
 
   useEffect(() => {
-    gsap.fromTo(navRef.current,
-      { y: -100, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, delay: 0.5, ease: 'power4.out' }
-    );
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: 'Portfolio', href: '/portfolio', internal: true },
-    { name: 'Services', href: isHome ? '#services' : '/#services', internal: false },
-    { name: 'Process', href: isHome ? '#process' : '/#process', internal: false },
-    { name: 'Contact', href: isHome ? '#contact' : '/#contact', internal: false },
-  ];
+  useEffect(() => {
+    if (isPreloadComplete) {
+      gsap.fromTo(
+        navRef.current,
+        { y: -100, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, delay: 0.1, ease: "power4.out" },
+      );
+    }
+  }, [isPreloadComplete]);
 
   return (
     <>
-      <nav ref={navRef} className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] w-[95%] max-w-7xl">
-        <div className="bg-dark/90 backdrop-blur-xl border border-white/10 rounded-full px-6 md:px-12 py-4 flex items-center justify-between shadow-2xl">
-          <div className="flex items-center gap-2">
-            <Link to="/" className="flex items-center gap-2">
-              <img src="/mp logo.png" alt="Marc Photography Logo" className="h-8 md:h-10 w-auto" />
-              <div className="text-champagne font-serif text-lg tracking-[0.4em] uppercase hidden xl:block">
-                Marc Photography
-              </div>
-            </Link>
-          </div>
+      <div
+        className={`fixed top-4 md:top-8 left-1/2 -translate-x-1/2 z-[100] w-[95%] max-w-7xl ${isHome && !isPreloadComplete ? "opacity-0 invisible" : ""}`}
+      >
+        <nav ref={navRef} className="w-full">
+          <div
+            className={`rounded-full px-6 md:px-12 py-4 flex items-center justify-between transition-all duration-500 ${isScrolled ? "bg-dark/90 backdrop-blur-xl border border-white/10 shadow-2xl" : "bg-transparent border border-transparent"} `}
+          >
+            <div className="flex items-center gap-2">
+              <a href="#" className="flex items-center gap-2">
+                <img
+                  src="/mp logo.png"
+                  alt="Marc Photography Logo"
+                  className="h-8 md:h-10 w-auto"
+                />
+                <div className="text-champagne font-serif text-lg tracking-[0.4em] uppercase hidden xl:block">
+                  Marc Photography
+                </div>
+              </a>
+            </div>
 
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              link.internal ? (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  className="text-offwhite/60 hover:text-signal font-mono text-sm uppercase tracking-widest transition-colors"
-                >
-                  {link.name}
-                </Link>
-              ) : (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  className="text-offwhite/60 hover:text-signal font-mono text-sm uppercase tracking-widest transition-colors"
-                >
-                  {link.name}
-                </a>
-              )
-            ))}
-          </div>
+            <div className="hidden md:flex items-center gap-8">
+              <a
+                href="#portfolio"
+                className="text-offwhite/60 hover:text-signal font-mono text-sm uppercase tracking-widest transition-colors"
+              >
+                Portfolio
+              </a>
+              <a
+                href="#services"
+                className="text-offwhite/60 hover:text-signal font-mono text-sm uppercase tracking-widest transition-colors"
+              >
+                Services
+              </a>
+              <a
+                href="#process"
+                className="text-offwhite/60 hover:text-signal font-mono text-sm uppercase tracking-widest transition-colors"
+              >
+                Process
+              </a>
+            </div>
 
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setIsContactOpen(true)}
-              className="bg-signal text-offwhite px-4 md:px-6 py-2 rounded-full font-sans font-bold text-xs md:text-sm uppercase tracking-wider hover:scale-105 transition-transform"
-            >
-              Inquire Now
-            </button>
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden text-offwhite p-2 hover:text-signal transition-colors"
-            >
-              <Menu size={24} />
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={onContactClick}
+                className="bg-signal text-offwhite px-4 md:px-6 py-2 rounded-full font-sans font-bold text-xs md:text-sm uppercase tracking-wider hover:scale-105 transition-transform"
+              >
+                Inquire Now
+              </button>
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="md:hidden text-offwhite p-2 hover:text-signal transition-colors"
+              >
+                <Menu size={24} />
+              </button>
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </div>
 
       {/* Mobile Menu Overlay */}
-      <div className={`fixed inset-0 z-[150] bg-dark transition-all duration-500 flex flex-col p-12 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+      <div
+        className={`fixed inset-0 z-[150] bg-dark transition-all duration-500 flex flex-col p-12 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+      >
         <div className="flex justify-between items-center mb-24">
-          <Link to="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2">
-            <img src="/mp logo.png" alt="Marc Photography Logo" className="h-8 w-auto" />
+          <a
+            href="#"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-2"
+          >
+            <img
+              src="/mp logo.png"
+              alt="Marc Photography Logo"
+              className="h-8 w-auto"
+            />
             <div className="text-champagne font-serif text-lg tracking-[0.4em] uppercase">
               MP
             </div>
-          </Link>
+          </a>
           <button onClick={() => setIsOpen(false)} className="text-offwhite">
             <X size={32} />
           </button>
         </div>
 
         <div className="flex flex-col gap-12">
-          {navLinks.map((link, i) => (
-            link.internal ? (
-              <Link
-                key={link.name}
-                to={link.href}
-                onClick={() => setIsOpen(false)}
-                className="text-offwhite text-5xl font-sans font-bold uppercase tracking-tighter hover:text-signal transition-colors"
-                style={{ transitionDelay: `${i * 100}ms` }}
-              >
-                {link.name}
-              </Link>
-            ) : (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="text-offwhite text-5xl font-sans font-bold uppercase tracking-tighter hover:text-signal transition-colors"
-                style={{ transitionDelay: `${i * 100}ms` }}
-              >
-                {link.name}
-              </a>
-            )
-          ))}
+          <a
+            href="#portfolio"
+            onClick={() => setIsOpen(false)}
+            className="text-offwhite text-5xl font-sans font-bold uppercase tracking-tighter hover:text-signal transition-colors"
+            style={{ transitionDelay: "0ms" }}
+          >
+            Portfolio
+          </a>
+          <a
+            href="#services"
+            onClick={() => setIsOpen(false)}
+            className="text-offwhite text-5xl font-sans font-bold uppercase tracking-tighter hover:text-signal transition-colors"
+            style={{ transitionDelay: "100ms" }}
+          >
+            Services
+          </a>
+          <a
+            href="#process"
+            onClick={() => setIsOpen(false)}
+            className="text-offwhite text-5xl font-sans font-bold uppercase tracking-tighter hover:text-signal transition-colors"
+            style={{ transitionDelay: "200ms" }}
+          >
+            Process
+          </a>
         </div>
 
         <div className="mt-auto flex flex-col gap-8">
-          <div className="text-offwhite/20 font-mono text-xs uppercase tracking-[0.5em]">Social Transmission</div>
+          <div className="text-offwhite/20 font-mono text-xs uppercase tracking-[0.5em]">
+            Social Transmission
+          </div>
           <div className="flex gap-8 text-offwhite/60">
-            <Instagram size={20} className="hover:text-signal cursor-pointer" />
-            <Facebook size={20} className="hover:text-signal cursor-pointer" />
-            <Mail size={20} className="hover:text-signal cursor-pointer" />
+            <a
+              href="https://www.facebook.com/mrcptghy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Facebook
+                size={20}
+                className="hover:text-signal cursor-pointer"
+              />
+            </a>
+            <a href="mailto:mrcptghy123@gmail.com">
+              <Mail size={20} className="hover:text-signal cursor-pointer" />
+            </a>
           </div>
         </div>
       </div>
-
-      <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
     </>
+  );
+};
+
+const Preloader = ({ onComplete }) => {
+  const containerRef = useRef(null);
+  const [isEntered, setIsEntered] = useState(false);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Intro and Auto-Exit Sequence
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setIsEntered(true);
+
+          // Trigger the exit animation immediately after intro finishes
+          const exitTl = gsap.timeline({
+            onComplete: onComplete,
+          });
+
+          exitTl
+            .to(".preloader-content", {
+              opacity: 0,
+              y: -30,
+              duration: 0.8,
+              ease: "power3.in",
+            })
+            .to(
+              ".preloader-bg",
+              {
+                opacity: 0,
+                duration: 1,
+                ease: "power2.inOut",
+              },
+              "-=0.4",
+            );
+        },
+      });
+
+      tl.to(".preloader-box", {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: "power4.out",
+        delay: 0.5,
+      })
+        .to(
+          ".camera-glow",
+          {
+            opacity: 0.15,
+            scale: 1,
+            duration: 2,
+            ease: "power2.inOut",
+          },
+          "-=0.5",
+        )
+        .to(
+          ".mp-logo",
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 1.5,
+            ease: "power3.out",
+          },
+          "-=1.5",
+        )
+        .to(
+          ".loading-text",
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power3.out",
+          },
+          "-=1",
+        )
+        // Add a slight pause so the user can see the fully loaded state before it disappears
+        .to({}, { duration: 0.8 });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [onComplete]);
+
+  // To avoid breaking React Hook rules, we don't conditionally hide this div completely using JS based on refs. We will use absolute positioning properly.
+  // Instead of querying style opacity, gsap handles visibility directly via opacity to 0 and pointerEvents to none for .preloader-bg
+
+  return (
+    <div
+      ref={containerRef}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center preloader-bg bg-dark ${isEntered ? "pointer-events-none opacity-0" : ""}`}
+    >
+      <div className="absolute inset-0 noise-overlay"></div>
+
+      <div className="preloader-content relative flex flex-col items-center z-10 w-full max-w-2xl px-4">
+        <div className="preloader-box opacity-0 translate-y-8 relative w-full aspect-video md:aspect-[21/9] bg-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-[2rem] flex items-center justify-center overflow-hidden shadow-2xl">
+          {/* Glowing Camera Backdrop */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <Camera className="camera-glow text-signal opacity-0 scale-50 blur-3xl w-full h-full max-w-md max-h-md" />
+            <Camera className="camera-glow text-champagne opacity-0 scale-50 blur-xl w-3/4 h-3/4 absolute max-w-sm max-h-sm" />
+          </div>
+
+          {/* Logo */}
+          <img
+            src="/mp logo.png"
+            alt="MP Logo"
+            className="mp-logo relative z-10 w-24 md:w-32 h-auto opacity-0 scale-90 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+          />
+
+          {/* Corner Decorations */}
+          <div className="loading-text absolute bottom-6 left-8 opacity-0 translate-y-4 text-offwhite/50 font-mono text-[10px] uppercase tracking-widest">
+            // MP System //
+          </div>
+          <div className="loading-text absolute bottom-6 right-8 opacity-0 translate-y-4 text-offwhite/50 font-mono text-[10px] uppercase tracking-widest">
+            // Online //
+          </div>
+          <div className="loading-text absolute top-6 left-8 opacity-0 translate-y-2 flex gap-1">
+            <span className="w-1.5 h-1.5 bg-signal rounded-full animate-pulse"></span>
+            <span className="w-1.5 h-1.5 bg-signal/20 rounded-full"></span>
+            <span className="w-1.5 h-1.5 bg-signal/20 rounded-full"></span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -143,14 +314,16 @@ const ContactModal = ({ isOpen, onClose }) => {
     const formData = new FormData(event.target);
 
     // Replace with configured Web3Forms access key from environment variables
-    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "YOUR_WEB3FORMS_ACCESS_KEY_HERE";
+    const accessKey =
+      import.meta.env.VITE_WEB3FORMS_ACCESS_KEY ||
+      "YOUR_WEB3FORMS_ACCESS_KEY_HERE";
     formData.append("access_key", accessKey);
     formData.append("subject", "New Inquiry Request");
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        body: formData
+        body: formData,
       });
 
       const data = await response.json();
@@ -170,12 +343,14 @@ const ContactModal = ({ isOpen, onClose }) => {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-dark/95 backdrop-blur-sm p-4">
+    <div
+      className={`fixed inset-0 z-[200] flex items-center justify-center bg-dark/95 backdrop-blur-sm p-4 transition-all duration-500 ${isOpen ? "opacity-100 pointer-events-auto visible" : "opacity-0 pointer-events-none invisible"}`}
+    >
       <div className="absolute inset-0" onClick={onClose}></div>
-      <div className="relative bg-dark border border-white/10 p-8 md:p-12 rounded-[2rem] w-full max-w-2xl shadow-2xl">
+      <div
+        className={`relative bg-dark border border-white/10 p-8 md:p-12 rounded-[2rem] w-full max-w-2xl shadow-2xl transition-all duration-500 delay-100 transform ${isOpen ? "translate-y-0 scale-100 opacity-100" : "translate-y-8 scale-95 opacity-0"}`}
+      >
         <button
           onClick={onClose}
           className="absolute top-6 right-6 text-offwhite/50 hover:text-signal transition-colors p-2"
@@ -191,19 +366,49 @@ const ContactModal = ({ isOpen, onClose }) => {
 
         <form onSubmit={onSubmit} className="flex flex-col gap-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input type="text" name="name" placeholder="FULL NAME *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
-            <input type="email" name="email" placeholder="EMAIL ADDRESS *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
+            <input
+              type="text"
+              name="name"
+              placeholder="FULL NAME *"
+              required
+              className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="EMAIL ADDRESS *"
+              required
+              className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors"
+            />
           </div>
           <div className="grid grid-cols-1 gap-6">
-            <input type="tel" name="phone" placeholder="PHONE NUMBER" className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
+            <input
+              type="tel"
+              name="phone"
+              placeholder="PHONE NUMBER"
+              className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors"
+            />
           </div>
-          <textarea name="vision" placeholder="TELL US ABOUT YOUR VISION *" required rows={4} className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors resize-none mt-4"></textarea>
+          <textarea
+            name="vision"
+            placeholder="TELL US ABOUT YOUR VISION *"
+            required
+            rows={4}
+            className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors resize-none mt-4"
+          ></textarea>
 
-          <button type="submit" className="bg-signal text-dark px-8 py-4 rounded-full font-sans font-bold text-sm uppercase tracking-widest hover:bg-offwhite transition-colors mt-4 self-start">
+          <button
+            type="submit"
+            className="bg-signal text-dark px-8 py-4 rounded-full font-sans font-bold text-sm uppercase tracking-widest hover:bg-offwhite transition-colors mt-4 self-start"
+          >
             Submit Inquiry
           </button>
         </form>
-        {result && <span className="text-signal font-mono text-xs uppercase tracking-widest mt-6 block">{result}</span>}
+        {result && (
+          <span className="text-signal font-mono text-xs uppercase tracking-widest mt-6 block">
+            {result}
+          </span>
+        )}
       </div>
     </div>
   );
@@ -218,14 +423,16 @@ const PencilModal = ({ isOpen, onClose }) => {
     const formData = new FormData(event.target);
 
     // Replace with configured Web3Forms access key from environment variables
-    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "YOUR_WEB3FORMS_ACCESS_KEY_HERE";
+    const accessKey =
+      import.meta.env.VITE_WEB3FORMS_ACCESS_KEY ||
+      "YOUR_WEB3FORMS_ACCESS_KEY_HERE";
     formData.append("access_key", accessKey);
     formData.append("subject", "New Pencil Booking Request");
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        body: formData
+        body: formData,
       });
 
       const data = await response.json();
@@ -245,12 +452,14 @@ const PencilModal = ({ isOpen, onClose }) => {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-dark/95 backdrop-blur-sm p-4">
+    <div
+      className={`fixed inset-0 z-[200] flex items-center justify-center bg-dark/95 backdrop-blur-sm p-4 transition-all duration-500 ${isOpen ? "opacity-100 pointer-events-auto visible" : "opacity-0 pointer-events-none invisible"}`}
+    >
       <div className="absolute inset-0" onClick={onClose}></div>
-      <div className="relative bg-dark border border-white/10 p-8 md:p-12 rounded-[2rem] w-full max-w-2xl shadow-2xl">
+      <div
+        className={`relative bg-dark border border-white/10 p-8 md:p-12 rounded-[2rem] w-full max-w-2xl shadow-2xl transition-all duration-500 delay-100 transform ${isOpen ? "translate-y-0 scale-100 opacity-100" : "translate-y-8 scale-95 opacity-0"}`}
+      >
         <button
           onClick={onClose}
           className="absolute top-6 right-6 text-offwhite/50 hover:text-signal transition-colors p-2"
@@ -266,26 +475,55 @@ const PencilModal = ({ isOpen, onClose }) => {
 
         <form onSubmit={onSubmit} className="flex flex-col gap-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input type="text" name="name" placeholder="FULL NAME *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
-            <input type="email" name="email" placeholder="EMAIL ADDRESS *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
+            <input
+              type="text"
+              name="name"
+              placeholder="FULL NAME *"
+              required
+              className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="EMAIL ADDRESS *"
+              required
+              className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors"
+            />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-            <input type="tel" name="phone" placeholder="PHONE NUMBER *" required className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors" />
+            <input
+              type="tel"
+              name="phone"
+              placeholder="PHONE NUMBER *"
+              required
+              className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors"
+            />
             <div className="relative border-b border-white/20 pb-2 group">
-              <span className="absolute left-0 top-0 text-offwhite/30 font-sans text-sm pointer-events-none transition-colors group-focus-within:text-signal">PREFERRED DATE *</span>
-              <Calendar className="absolute right-0 bottom-2 text-offwhite/30 group-focus-within:text-signal pointer-events-none transition-colors" size={18} />
+              <span className="absolute left-0 top-0 text-offwhite/30 font-sans text-sm pointer-events-none transition-colors group-focus-within:text-signal">
+                PREFERRED DATE *
+              </span>
+              <Calendar
+                className="absolute right-0 bottom-2 text-offwhite/30 group-focus-within:text-signal pointer-events-none transition-colors"
+                size={18}
+              />
               <input
                 type="date"
                 name="preferred_date"
                 required
-                style={{ colorScheme: 'dark' }}
+                style={{ colorScheme: "dark" }}
                 className="bg-transparent w-full pt-6 text-offwhite font-sans focus:outline-none transition-colors cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
             </div>
           </div>
           <div className="relative border-b border-white/20 pb-2 mt-4">
-            <select name="event_type" required className="bg-dark w-full text-offwhite font-sans focus:outline-none focus:border-signal transition-colors appearance-none cursor-pointer">
-              <option value="" disabled selected className="text-offwhite/30">SELECT EVENT TYPE *</option>
+            <select
+              name="event_type"
+              required
+              className="bg-dark w-full text-offwhite font-sans focus:outline-none focus:border-signal transition-colors appearance-none cursor-pointer"
+            >
+              <option value="" disabled selected className="text-offwhite/30">
+                SELECT EVENT TYPE *
+              </option>
               <option value="Wedding">Wedding</option>
               <option value="Debut">Debut</option>
               <option value="Prenup">Prenup / Engagement</option>
@@ -293,50 +531,65 @@ const PencilModal = ({ isOpen, onClose }) => {
               <option value="Other">Other</option>
             </select>
           </div>
-          <textarea name="details" placeholder="ANY ADDITIONAL DETAILS?" rows={3} className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors resize-none mt-4"></textarea>
+          <textarea
+            name="details"
+            placeholder="ANY ADDITIONAL DETAILS?"
+            rows={3}
+            className="bg-transparent border-b border-white/20 pb-2 text-offwhite placeholder:text-offwhite/30 font-sans focus:outline-none focus:border-signal transition-colors resize-none mt-4"
+          ></textarea>
 
-          <button type="submit" className="bg-signal text-dark px-8 py-4 rounded-full font-sans font-bold text-sm uppercase tracking-widest hover:bg-offwhite transition-colors mt-4 self-start">
+          <button
+            type="submit"
+            className="bg-signal text-dark px-8 py-4 rounded-full font-sans font-bold text-sm uppercase tracking-widest hover:bg-offwhite transition-colors mt-4 self-start"
+          >
             Secure Date
           </button>
         </form>
-        {result && <span className="text-signal font-mono text-xs uppercase tracking-widest mt-6 block">{result}</span>}
+        {result && (
+          <span className="text-signal font-mono text-xs uppercase tracking-widest mt-6 block">
+            {result}
+          </span>
+        )}
       </div>
     </div>
   );
 };
 
-import ReactPlayer from 'react-player';
+import ReactPlayer from "react-player";
 
 const Hero = ({
   title1 = "Sophisticated Visuals.",
   title2 = "Timeless Memories.",
   subtitle = "Bespoke photography and cinematic films crafted for weddings, celebrations, and distinguished events.",
-  showButton = true
+  showButton = true,
+  isPreloadComplete = false,
+  onBookClick,
 }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
+    if (!isPreloadComplete) return;
+
     const ctx = gsap.context(() => {
-      gsap.from(".hero-line-1", {
-        y: 100,
-        opacity: 0,
-        duration: 1.2,
-        ease: "power4.out",
-        delay: 0.8
-      });
-      gsap.from(".hero-line-2", {
-        y: 150,
-        opacity: 0,
-        duration: 1.5,
-        ease: "power4.out",
-        delay: 1
-      });
+      gsap.fromTo(
+        ".hero-line-1",
+        { y: 100, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.2, ease: "power4.out", delay: 0.2 },
+      );
+      gsap.fromTo(
+        ".hero-line-2",
+        { y: 150, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.5, ease: "power4.out", delay: 0.4 },
+      );
     }, containerRef);
     return () => ctx.revert();
-  }, []);
+  }, [isPreloadComplete]);
 
   return (
-    <section ref={containerRef} className="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-6 bg-dark overflow-hidden">
+    <section
+      ref={containerRef}
+      className="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-6 bg-dark overflow-hidden"
+    >
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-dark/40 z-10 transition-colors duration-1000"></div>
         <div className="absolute inset-0 w-full h-full scale-[1.1] pointer-events-none">
@@ -368,22 +621,42 @@ const Hero = ({
 
         {showButton && (
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-            <Link to="/portfolio" className="btn-magnetic group bg-offwhite text-dark min-w-[240px] flex items-center justify-center">
+            <button
+              onClick={onBookClick}
+              className="btn-magnetic group bg-offwhite text-dark min-w-[240px] flex items-center justify-center py-4"
+            >
               <span className="relative z-10 flex items-center gap-3 font-bold uppercase tracking-widest text-xs">
-                View Portfolio <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
+                Book Now{" "}
+                <ArrowRight
+                  size={16}
+                  className="group-hover:translate-x-2 transition-transform"
+                />
               </span>
-            </Link>
+            </button>
             <div className="flex items-center gap-4 px-6">
               <div className="flex -space-x-4">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full bg-paper/20 border-2 border-offwhite/10 flex items-center justify-center backdrop-blur-sm">
-                    <Camera size={14} className="text-offwhite/40" />
-                  </div>
-                ))}
+                {["/photog-1.jpg", "/photog-2.jpg", "/photog-3.jpg"].map(
+                  (src, i) => (
+                    <div
+                      key={i}
+                      className="w-10 h-10 rounded-full border-2 border-offwhite/10 flex items-center justify-center overflow-hidden"
+                    >
+                      <img
+                        src={src}
+                        alt={`Event capture ${i + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ),
+                )}
               </div>
               <div className="text-left">
-                <div className="text-offwhite font-bold text-xs uppercase">500+ Events</div>
-                <div className="text-offwhite/40 font-mono text-[10px] uppercase">Captured with Precision</div>
+                <div className="text-offwhite font-bold text-xs uppercase">
+                  300+ Events
+                </div>
+                <div className="text-offwhite/40 font-mono text-[10px] uppercase">
+                  Captured with Precision
+                </div>
               </div>
             </div>
           </div>
@@ -392,9 +665,22 @@ const Hero = ({
 
       <div className="absolute bottom-12 left-12 hidden lg:block">
         <div className="flex flex-col gap-6 text-dark/20">
-          <Instagram size={20} className="hover:text-signal transition-colors cursor-pointer" />
-          <Facebook size={20} className="hover:text-signal transition-colors cursor-pointer" />
-          <Mail size={20} className="hover:text-signal transition-colors cursor-pointer" />
+          <a
+            href="https://www.facebook.com/mrcptghy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Facebook
+              size={20}
+              className="hover:text-signal transition-colors cursor-pointer"
+            />
+          </a>
+          <a href="mailto:mrcptghy123@gmail.com">
+            <Mail
+              size={20}
+              className="hover:text-signal transition-colors cursor-pointer"
+            />
+          </a>
         </div>
       </div>
 
@@ -433,21 +719,28 @@ const FeatureCard = ({ title, description, icon: Icon, type, bgImage }) => {
         <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-12 text-signal">
           <Icon size={20} />
         </div>
-        <h3 className="text-offwhite text-3xl font-sans font-bold tracking-tighter mb-6">{title}</h3>
-        <p className="text-offwhite/60 font-sans leading-relaxed text-sm max-w-[280px]">{description}</p>
+        <h3 className="text-offwhite text-3xl font-sans font-bold tracking-tighter mb-6">
+          {title}
+        </h3>
+        <p className="text-offwhite/60 font-sans leading-relaxed text-sm max-w-[280px]">
+          {description}
+        </p>
       </div>
 
       <div className="relative z-10 mt-8 pt-8 border-t border-white/10">
-        {type === 'shuffler' && (
+        {type === "shuffler" && (
           <div className="flex gap-2">
-            {['MEMORIES', 'FRAMES', 'LENS'].map(word => (
-              <span key={word} className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-mono uppercase tracking-widest text-offwhite/40 italic">
+            {["MEMORIES", "FRAMES", "LENS"].map((word) => (
+              <span
+                key={word}
+                className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-mono uppercase tracking-widest text-offwhite/40 italic"
+              >
                 {word}
               </span>
             ))}
           </div>
         )}
-        {type === 'telemetry' && (
+        {type === "telemetry" && (
           <div className="flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-signal animate-pulse"></span>
             <span className="text-[10px] font-mono text-offwhite/40 uppercase tracking-widest underline decoration-signal/30 underline-offset-4">
@@ -455,7 +748,7 @@ const FeatureCard = ({ title, description, icon: Icon, type, bgImage }) => {
             </span>
           </div>
         )}
-        {type === 'scheduler' && (
+        {type === "scheduler" && (
           <div className="flex items-center gap-3">
             <Calendar size={14} className="text-signal" />
             <span className="text-[10px] font-mono text-offwhite/40 uppercase tracking-widest">
@@ -482,14 +775,18 @@ const Features = () => {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top 80%",
-        }
+        },
       });
     }, containerRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <section id="services" ref={containerRef} className="py-24 px-6 bg-offwhite">
+    <section
+      id="services"
+      ref={containerRef}
+      className="py-24 px-6 bg-[#131213]"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           <div className="feature-card h-full">
@@ -537,8 +834,8 @@ const Philosophy = () => {
           trigger: containerRef.current,
           start: "top bottom",
           end: "bottom top",
-          scrub: true
-        }
+          scrub: true,
+        },
       });
 
       gsap.from(".reveal-text", {
@@ -550,14 +847,17 @@ const Philosophy = () => {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top 75%",
-        }
+        },
       });
     }, containerRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={containerRef} className="relative py-48 px-6 bg-dark overflow-hidden">
+    <section
+      ref={containerRef}
+      className="relative py-48 px-6 bg-dark overflow-hidden"
+    >
       <div className="philosophy-bg absolute -top-[15%] left-0 w-full h-[130%] z-0">
         <img
           src="/philosophy-bg.jpg"
@@ -576,14 +876,19 @@ const Philosophy = () => {
         </h2>
         <div className="flex flex-col gap-12">
           <p className="reveal-text text-offwhite text-4xl md:text-6xl font-serif italic leading-tight">
-            "Most photography focuses on: <span className="text-offwhite/40">preserving the past.</span>"
+            "Most photography focuses on:{" "}
+            <span className="text-offwhite/40">preserving the past.</span>"
           </p>
           <p className="reveal-text text-signal text-4xl md:text-6xl font-sans font-bold uppercase tracking-tighter leading-tight">
-            Because every occasion <span className="underline decoration-offwhite/10 underline-offset-8 italic">deserves timeless artistry.</span>
+            Because every occasion{" "}
+            <span className="underline decoration-offwhite/10 underline-offset-8 italic">
+              deserves timeless artistry.
+            </span>
           </p>
         </div>
         <p className="reveal-text mt-24 text-offwhite/30 font-mono text-xs max-w-lg mx-auto leading-relaxed uppercase tracking-widest">
-          An image is more than a record — it is a statement of a moment destined to endure.
+          An image is more than a record — it is a statement of a moment
+          destined to endure.
         </p>
       </div>
     </section>
@@ -592,7 +897,9 @@ const Philosophy = () => {
 
 const ProtocolStep = ({ number, title, subtitle, description, isActive }) => {
   return (
-    <div className={`stack-card transition-all duration-700 ${isActive ? 'scale-100 opacity-100' : 'scale-95 opacity-50'}`}>
+    <div
+      className={`stack-card transition-all duration-700 ${isActive ? "scale-100 opacity-100" : "scale-95 opacity-50"}`}
+    >
       <div className="flex flex-col md:flex-row gap-12 h-full">
         <div className="flex-1 flex flex-col justify-between">
           <div>
@@ -603,7 +910,9 @@ const ProtocolStep = ({ number, title, subtitle, description, isActive }) => {
             <h3 className="text-5xl md:text-7xl font-sans font-bold tracking-tighter uppercase mb-6 leading-none">
               {title}
             </h3>
-            <div className="text-dark/40 font-serif italic text-2xl mb-12">{subtitle}</div>
+            <div className="text-dark/40 font-serif italic text-2xl mb-12">
+              {subtitle}
+            </div>
           </div>
 
           <div className="max-w-md">
@@ -617,12 +926,16 @@ const ProtocolStep = ({ number, title, subtitle, description, isActive }) => {
           <div className="absolute top-0 right-0 p-8">
             <Clock size={20} className="text-dark/10" />
           </div>
-          <div className="text-8xl font-sans font-bold text-dark/5 select-none">{number}</div>
+          <div className="text-8xl font-sans font-bold text-dark/5 select-none">
+            {number}
+          </div>
           <div className="absolute bottom-12 left-12 flex flex-col gap-4">
             <div className="w-48 h-1 bg-dark/10 rounded-full overflow-hidden">
               <div className="w-1/2 h-full bg-signal"></div>
             </div>
-            <div className="text-[10px] font-mono text-dark/20 uppercase tracking-widest">Syncing Data... 0{number}.00</div>
+            <div className="text-[10px] font-mono text-dark/20 uppercase tracking-widest">
+              Syncing Data... 0{number}.00
+            </div>
           </div>
         </div>
       </div>
@@ -636,11 +949,14 @@ const Protocol = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-12">
           <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-sans font-bold tracking-tighter uppercase leading-[0.8] text-dark/10">
-            The<br /><span className="text-dark">Protocol.</span>
+            The
+            <br />
+            <span className="text-dark">Protocol.</span>
           </h2>
           <div className="max-w-xs">
             <p className="text-dark/40 font-mono text-[10px] uppercase tracking-widest leading-relaxed italic">
-              A systematic approach to event coverage. No noise. No interference. Pure signal.
+              A systematic approach to event coverage. No noise. No
+              interference. Pure signal.
             </p>
           </div>
         </div>
@@ -673,34 +989,35 @@ const Protocol = () => {
   );
 };
 
-const Membership = () => {
+const Membership = ({ onBookClick }) => {
   const containerRef = useRef(null);
-  const [isPencilOpen, setIsPencilOpen] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // Intro Reveal Animation
       gsap.from(".membership-reveal", {
-        y: 60,
+        y: 100,
         opacity: 0,
-        duration: 1,
+        duration: 1.5,
         stagger: 0.2,
         ease: "power4.out",
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top 75%",
-        }
+        },
       });
 
+      // Cards Stagger Animation
       gsap.from(".membership-card", {
-        scale: 0.9,
+        y: 50,
         opacity: 0,
         duration: 1,
         stagger: 0.1,
-        ease: "power4.out",
+        ease: "back.out(1.7)",
         scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 65%",
-        }
+          trigger: ".membership-card",
+          start: "top 85%",
+        },
       });
     }, containerRef);
     return () => ctx.revert();
@@ -713,32 +1030,40 @@ const Membership = () => {
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
           <div>
             <h2 className="membership-reveal text-offwhite text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-sans font-bold tracking-tighter uppercase leading-none mb-12">
-              Ready for <br /><span className="text-signal italic">Deployment?</span>
+              Ready for <br />
+              <span className="text-signal italic">Deployment?</span>
             </h2>
             <p className="membership-reveal text-offwhite/40 font-mono text-sm uppercase tracking-widest mb-12 leading-relaxed">
-              Limited slots available for the 2026 season. <br /> Secure your event date in the Marc Photography registry.
+              Limited slots available for the 2026 season. <br /> Secure your
+              event date in the Marc Photography registry.
             </p>
             <div className="membership-reveal">
               <button
-                onClick={() => setIsPencilOpen(true)}
+                onClick={onBookClick}
                 className="bg-signal text-offwhite px-8 md:px-12 py-4 md:py-6 rounded-full font-sans font-bold text-base md:text-lg uppercase tracking-widest hover:bg-offwhite hover:text-dark transition-colors flex items-center gap-4"
               >
                 Book Now <Play size={20} fill="currentColor" />
               </button>
             </div>
-            <PencilModal isOpen={isPencilOpen} onClose={() => setIsPencilOpen(false)} />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
             {[
-              { label: 'Weddings', value: 'Prime' },
-              { label: 'Debuts', value: 'High' },
-              { label: 'Prenups', value: 'Studio' },
-              { label: 'Corporate', value: 'Active' }
-            ].map(item => (
-              <div key={item.label} className="membership-card border border-white/10 p-6 md:p-8 rounded-[2rem] hover:border-signal/50 transition-colors">
-                <div className="text-offwhite/20 font-mono text-[10px] uppercase tracking-widest mb-4">{item.label}</div>
-                <div className="text-offwhite text-xl md:text-2xl font-sans font-bold uppercase tracking-tighter italic">{item.value}</div>
+              { label: "Weddings", value: "Prime" },
+              { label: "Debuts", value: "High" },
+              { label: "Prenups", value: "Studio" },
+              { label: "Corporate", value: "Active" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="membership-card border border-white/10 p-6 md:p-8 rounded-[2rem] hover:border-signal/50 transition-colors"
+              >
+                <div className="text-offwhite/20 font-mono text-[10px] uppercase tracking-widest mb-4">
+                  {item.label}
+                </div>
+                <div className="text-offwhite text-xl md:text-2xl font-sans font-bold uppercase tracking-tighter italic">
+                  {item.value}
+                </div>
               </div>
             ))}
           </div>
@@ -759,33 +1084,64 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-24">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-4 mb-6">
-              <img src="/mp logo.png" alt="Marc Photography Logo" className="h-12 w-auto" />
+              <img
+                src="/mp logo.png"
+                alt="Marc Photography Logo"
+                className="h-12 w-auto"
+              />
               <div className="text-champagne font-serif text-3xl tracking-[0.3em] uppercase italic">
                 Marc Photography.
               </div>
             </div>
             <p className="text-offwhite/30 font-mono text-[10px] uppercase tracking-widest max-w-sm leading-relaxed">
-              Philippine-based photography & videography team.
-              Architecting memories since 2018. Available for nationwide and international deployment.
+              Philippine-based photography & videography team. Architecting
+              memories since 2018. Available for nationwide and international
+              deployment.
             </p>
           </div>
 
           <div>
-            <h4 className="text-offwhite font-sans font-bold text-xs uppercase tracking-widest mb-8 text-signal italic">— Navigation</h4>
+            <h4 className="text-offwhite font-sans font-bold text-xs uppercase tracking-widest mb-8 text-signal italic">
+              — Navigation
+            </h4>
             <div className="flex flex-col gap-4">
-              <Link to="/portfolio" className="text-offwhite/40 hover:text-offwhite font-mono text-[10px] uppercase tracking-widest transition-colors tracking-widest">Portfolio</Link>
-              <Link to="/" className="text-offwhite/40 hover:text-offwhite font-mono text-[10px] uppercase tracking-widest transition-colors tracking-widest">Home</Link>
-              <a href="#services" className="text-offwhite/40 hover:text-offwhite font-mono text-[10px] uppercase tracking-widest transition-colors tracking-widest">Services</a>
-              <a href="#contact" className="text-offwhite/40 hover:text-offwhite font-mono text-[10px] uppercase tracking-widest transition-colors tracking-widest">Contact</a>
+              <a
+                href="#portfolio"
+                className="text-offwhite/40 hover:text-offwhite font-mono text-[10px] uppercase tracking-widest transition-colors tracking-widest"
+              >
+                Portfolio
+              </a>
+              <a
+                href="#services"
+                className="text-offwhite/40 hover:text-offwhite font-mono text-[10px] uppercase tracking-widest transition-colors tracking-widest"
+              >
+                Services
+              </a>
+              <a
+                href="#process"
+                className="text-offwhite/40 hover:text-offwhite font-mono text-[10px] uppercase tracking-widest transition-colors tracking-widest"
+              >
+                Process
+              </a>
+              <button
+                onClick={() => window.scrollTo(0, 0)}
+                className="text-left text-offwhite/40 hover:text-offwhite font-mono text-[10px] uppercase tracking-widest transition-colors tracking-widest"
+              >
+                Home
+              </button>
             </div>
           </div>
 
           <div>
-            <h4 className="text-offwhite font-sans font-bold text-xs uppercase tracking-widest mb-8 text-signal italic">— Signal</h4>
+            <h4 className="text-offwhite font-sans font-bold text-xs uppercase tracking-widest mb-8 text-signal italic">
+              — Signal
+            </h4>
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></span>
-                <span className="text-offwhite/40 font-mono text-[10px] uppercase tracking-widest">System Active / 2026 Season</span>
+                <span className="text-offwhite/40 font-mono text-[10px] uppercase tracking-widest">
+                  System Active / 2026 Season
+                </span>
               </div>
               <div className="text-offwhite/40 font-mono text-[10px] uppercase tracking-widest mt-4">
                 Designed & Developed By Stiffy Navales
@@ -799,9 +1155,19 @@ const Footer = () => {
             © 2026 Marc Photography. All Rights Reserved. Eradicate mediocrity.
           </div>
           <div className="flex gap-8 text-offwhite/20">
-            <Instagram size={14} className="hover:text-signal cursor-pointer" />
-            <Facebook size={14} className="hover:text-signal cursor-pointer" />
-            <Mail size={14} className="hover:text-signal cursor-pointer" />
+            <a
+              href="https://www.facebook.com/mrcptghy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Facebook
+                size={14}
+                className="hover:text-signal cursor-pointer"
+              />
+            </a>
+            <a href="mailto:mrcptghy123@gmail.com">
+              <Mail size={14} className="hover:text-signal cursor-pointer" />
+            </a>
           </div>
         </div>
       </div>
@@ -810,14 +1176,20 @@ const Footer = () => {
 };
 
 const ScrollToTop = () => {
-  const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [pathname]);
+  }, []);
   return null;
 };
 
-const PortfolioItem = ({ title, category, image, video, span = 'col-span-1', onSelect }) => {
+const PortfolioItem = ({
+  title,
+  category,
+  image,
+  video,
+  span = "col-span-1",
+  onSelect,
+}) => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
 
@@ -841,7 +1213,7 @@ const PortfolioItem = ({ title, category, image, video, span = 'col-span-1', onS
           onSelect(video);
         }
       }}
-      className={`portfolio-card group relative overflow-hidden rounded-[2rem] bg-dark aspect-[4/5] md:aspect-auto ${span === 'full' ? 'md:col-span-2 h-[400px] md:h-[500px]' : 'h-[350px] md:h-[600px]'} ${video ? 'video-card-hover cursor-none' : ''}`}
+      className={`portfolio-card group relative overflow-hidden rounded-[2rem] bg-dark aspect-[4/5] md:aspect-auto ${span === "full" ? "md:col-span-2 h-[400px] md:h-[500px]" : "h-[350px] md:h-[600px]"} ${video ? "video-card-hover cursor-none" : ""}`}
     >
       <div className="absolute inset-0 z-0">
         {video ? (
@@ -859,7 +1231,11 @@ const PortfolioItem = ({ title, category, image, video, span = 'col-span-1', onS
               onClick={togglePlay}
               className="absolute top-6 right-6 z-30 w-12 h-12 rounded-full bg-dark/50 backdrop-blur-md flex items-center justify-center text-offwhite border border-white/10 hover:bg-signal transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
             >
-              {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-1" />}
+              {isPlaying ? (
+                <Pause size={20} />
+              ) : (
+                <Play size={20} className="ml-1" />
+              )}
             </button>
           </>
         ) : (
@@ -888,14 +1264,231 @@ const PortfolioItem = ({ title, category, image, video, span = 'col-span-1', onS
 };
 
 const Home = () => {
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isPencilOpen, setIsPencilOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+
+  // Try to grab preloader state from sessionStorage so it doesn't run on every hot reload
+  // But for the user request, it runs initially on `/`
+  const [isPreloadComplete, setIsPreloadComplete] = useState(false);
+
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!isPreloadComplete) return;
+
+    const ctx = gsap.context(() => {
+      // Portfolio Section Titles Animation
+      gsap.utils.toArray(".portfolio-section-title").forEach((title) => {
+        gsap.from(title, {
+          y: 50,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: title,
+            start: "top 85%",
+          },
+        });
+      });
+
+      // Cards Stagger Animation
+      gsap.utils.toArray(".portfolio-grid").forEach((grid) => {
+        const cards = grid.querySelectorAll(".portfolio-card");
+        gsap.from(cards, {
+          y: 100,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.1,
+          ease: "power4.out",
+          scrollTrigger: {
+            trigger: grid,
+            start: "top 80%",
+          },
+        });
+      });
+    }, containerRef);
+    return () => ctx.revert();
+  }, [isPreloadComplete]);
+
+  const photography = [
+    {
+      title: "E L I Z A",
+      category: "Marc Photography",
+      image: "/photog-3.jpg",
+      span: "full",
+    },
+    {
+      title: "G E M S I + I A N",
+      category: "Marc Photography",
+      image: "/photog-1.jpg",
+    },
+    { title: "S T E V E N", category: "Forever Kids", image: "/photog-2.jpg" },
+  ];
+
+  const videography = [
+    {
+      title: "E L I Z A | Pre Debut Film",
+      category: "Marc Photography",
+      video: "/vid-port-1.mp4",
+      span: "full",
+    },
+    {
+      title: "J E S S A & R Y A N | THE WEDDING | SAME DAY EDIT",
+      category: "Marc Photography",
+      video: "/vid-port-2.mp4",
+      span: "full",
+    },
+    {
+      title: "Allison's 1st Birthday & Baptismal | SAME DAY EDIT",
+      category: "Forever Kids",
+      video: "/vid-port-3.mp4",
+      span: "full",
+    },
+  ];
+
+  const corporate = [
+    {
+      title: "H I S E N S E | GOLF TOURNAMENT",
+      category: "Marc Photography",
+      video: "/vid-corp-1.mp4",
+      span: "full",
+    },
+    {
+      title: "Advertising Reels - Dahon at Mesa",
+      category: "Marc Photography",
+      video: "/vid-corp-2.mp4",
+    },
+    {
+      title: "LIFE IS ON SCHNEIDER ELECTRIC POWER UP",
+      category: "Marc Photography",
+      video: "/vid-corp-3.mp4",
+    },
+  ];
+
   return (
-    <>
-      <Hero />
+    <div ref={containerRef}>
+      {!isPreloadComplete && (
+        <Preloader onComplete={() => setIsPreloadComplete(true)} />
+      )}
+      <Navbar
+        isPreloadComplete={isPreloadComplete}
+        onContactClick={() => setIsContactOpen(true)}
+      />
+      <Hero
+        isPreloadComplete={isPreloadComplete}
+        onBookClick={() => setIsPencilOpen(true)}
+      />
+
+      <div id="portfolio" className="bg-dark pt-24 pb-12 w-full">
+        <VideoCursor />
+
+        {/* Video Modal */}
+        {selectedVideo && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-dark/95 backdrop-blur-sm">
+            <div
+              className="absolute inset-0"
+              onClick={() => setSelectedVideo(null)}
+            ></div>
+            <button
+              onClick={() => setSelectedVideo(null)}
+              className="absolute top-8 right-8 z-50 text-offwhite/50 hover:text-offwhite transition-colors p-4"
+            >
+              <X size={32} />
+            </button>
+            <div className="relative z-50 w-full max-w-6xl aspect-video bg-black md:rounded-lg overflow-hidden shadow-2xl mt-16 md:mt-0">
+              <video
+                src={selectedVideo}
+                autoPlay
+                controls
+                playsInline
+                className="w-full h-full object-contain pointer-events-auto"
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="px-6 relative z-20">
+          <div className="max-w-7xl mx-auto">
+            {/* Photography Section */}
+            <div className="mb-24 md:mb-32">
+              <div className="portfolio-section-title flex flex-col md:flex-row md:justify-between md:items-end mb-8 md:mb-16 gap-4">
+                <h2 className="text-offwhite text-4xl sm:text-5xl md:text-8xl font-sans font-bold tracking-tighter uppercase leading-none">
+                  Photo<span className="text-signal italic">graphy.</span>
+                </h2>
+                <div className="text-offwhite/40 md:text-offwhite/20 font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3rem] md:tracking-[0.5rem]">
+                  Archive // Batch 01
+                </div>
+              </div>
+
+              <div className="portfolio-grid grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                {photography.map((item, idx) => (
+                  <PortfolioItem key={idx} {...item} />
+                ))}
+              </div>
+            </div>
+
+            {/* Videography Section */}
+            <div className="mb-24 md:mb-32">
+              <div className="portfolio-section-title flex flex-col md:flex-row md:justify-between md:items-end mb-8 md:mb-16 gap-4">
+                <h2 className="text-offwhite text-4xl sm:text-5xl md:text-8xl font-sans font-bold tracking-tighter uppercase leading-none">
+                  Video<span className="text-signal italic">graphy.</span>
+                </h2>
+                <div className="text-offwhite/40 md:text-offwhite/20 font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3rem] md:tracking-[0.5rem]">
+                  Transmission // Live
+                </div>
+              </div>
+
+              <div className="portfolio-grid grid grid-cols-1 gap-4 md:gap-8">
+                {videography.map((item, idx) => (
+                  <PortfolioItem
+                    key={idx}
+                    {...item}
+                    onSelect={setSelectedVideo}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Corporate Section */}
+            <div className="mb-24 md:mb-32">
+              <div className="portfolio-section-title flex flex-col md:flex-row md:justify-between md:items-end mb-8 md:mb-16 gap-4">
+                <h2 className="text-offwhite text-4xl sm:text-5xl md:text-8xl font-sans font-bold tracking-tighter uppercase leading-none">
+                  Corpo<span className="text-signal italic">rate.</span>
+                </h2>
+                <div className="text-offwhite/40 md:text-offwhite/20 font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3rem] md:tracking-[0.5rem]">
+                  Commercial // Enterprise
+                </div>
+              </div>
+
+              <div className="portfolio-grid grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                {corporate.map((item, idx) => (
+                  <PortfolioItem
+                    key={idx}
+                    {...item}
+                    onSelect={setSelectedVideo}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <Features />
       <Philosophy />
       <Protocol />
-      <Membership />
-    </>
+      <Membership onBookClick={() => setIsPencilOpen(true)} />
+      <Footer />
+      <ContactModal
+        isOpen={isContactOpen}
+        onClose={() => setIsContactOpen(false)}
+      />
+      <PencilModal
+        isOpen={isPencilOpen}
+        onClose={() => setIsPencilOpen(false)}
+      />
+    </div>
   );
 };
 
@@ -909,21 +1502,21 @@ const VideoCursor = () => {
     };
 
     const handleMouseOver = (e) => {
-      if (e.target.closest('.video-card-hover')) {
+      if (e.target.closest(".video-card-hover")) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseover', handleMouseOver);
-    window.addEventListener('mouseout', handleMouseOver);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseover", handleMouseOver);
+    window.addEventListener("mouseout", handleMouseOver);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseover', handleMouseOver);
-      window.removeEventListener('mouseout', handleMouseOver);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseover", handleMouseOver);
+      window.removeEventListener("mouseout", handleMouseOver);
     };
   }, []);
 
@@ -932,7 +1525,7 @@ const VideoCursor = () => {
       className={`fixed top-0 left-0 pointer-events-none z-[100] transition-opacity duration-300 items-center justify-center hidden md:flex`}
       style={{
         transform: `translate(${position.x}px, ${position.y}px) translate(-50%, -50%)`,
-        opacity: isVisible ? 1 : 0
+        opacity: isVisible ? 1 : 0,
       }}
     >
       <div className="bg-signal text-dark px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap shadow-xl">
@@ -942,180 +1535,12 @@ const VideoCursor = () => {
   );
 };
 
-const PortfolioPage = () => {
-  const containerRef = useRef(null);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Hero Title Animation
-      gsap.from(".portfolio-hero-title", {
-        y: 100,
-        opacity: 0,
-        duration: 1.2,
-        ease: "power4.out",
-        delay: 0.2
-      });
-
-      // Section Titles Animation
-      gsap.utils.toArray(".portfolio-section-title").forEach(title => {
-        gsap.from(title, {
-          y: 50,
-          opacity: 0,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: title,
-            start: "top 85%",
-          }
-        });
-      });
-
-      // Cards Stagger Animation
-      gsap.utils.toArray(".portfolio-grid").forEach(grid => {
-        const cards = grid.querySelectorAll(".portfolio-card");
-        gsap.from(cards, {
-          y: 100,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.1,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: grid,
-            start: "top 80%",
-          }
-        });
-      });
-
-    }, containerRef);
-    return () => ctx.revert();
-  }, []);
-
-  const photography = [
-    { title: "E L I Z A", category: "Marc Photography", image: "/photog-3.jpg", span: "full" },
-    { title: "G E M S I + I A N", category: "Marc Photography", image: "/photog-1.jpg" },
-    { title: "S T E V E N", category: "Forever Kids", image: "/photog-2.jpg" },
-  ];
-
-  const videography = [
-    { title: "E L I Z A | Pre Debut Film", category: "Marc Photography", video: "/vid-port-1.mp4", span: "full" },
-    { title: "J E S S A & R Y A N | THE WEDDING | SAME DAY EDIT", category: "Marc Photography", video: "/vid-port-2.mp4", span: "full" },
-    { title: "Allison's 1st Birthday & Baptismal | SAME DAY EDIT", category: "Forever Kids", video: "/vid-port-3.mp4", span: "full" },
-  ];
-
-  const corporate = [
-    { title: "H I S E N S E | GOLF TOURNAMENT", category: "Marc Photography", video: "/vid-corp-1.mp4", span: "full" },
-    { title: "Advertising Reels - Dahon at Mesa", category: "Marc Photography", video: "/vid-corp-2.mp4" },
-    { title: "LIFE IS ON SCHNEIDER ELECTRIC POWER UP", category: "Marc Photography", video: "/vid-corp-3.mp4" },
-  ];
-
-  return (
-    <div ref={containerRef} className="bg-dark min-h-screen">
-      <VideoCursor />
-
-      {/* Video Modal */}
-      {selectedVideo && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-dark/95 backdrop-blur-sm">
-          <div className="absolute inset-0" onClick={() => setSelectedVideo(null)}></div>
-          <button
-            onClick={() => setSelectedVideo(null)}
-            className="absolute top-8 right-8 z-50 text-offwhite/50 hover:text-offwhite transition-colors p-4"
-          >
-            <X size={32} />
-          </button>
-          <div className="relative z-10 w-full max-w-6xl aspect-video bg-black md:rounded-lg overflow-hidden shadow-2xl mt-16 md:mt-0">
-            <video
-              src={selectedVideo}
-              autoPlay
-              controls
-              playsInline
-              className="w-full h-full object-contain"
-            />
-          </div>
-        </div>
-      )}
-      <Hero
-        title1="Our"
-        title2="Portfolio."
-        subtitle="A curated archive of our most distinguishable visual narratives."
-        showButton={false}
-      />
-      <div className="py-24 px-6 relative z-20">
-        <div className="max-w-7xl mx-auto">
-          {/* Photography Section */}
-          <div className="mb-24 md:mb-32">
-            <div className="portfolio-section-title flex flex-col md:flex-row md:justify-between md:items-end mb-8 md:mb-16 gap-4">
-              <h2 className="text-offwhite text-4xl sm:text-5xl md:text-8xl font-sans font-bold tracking-tighter uppercase leading-none">
-                Photo<span className="text-signal italic">graphy.</span>
-              </h2>
-              <div className="text-offwhite/40 md:text-offwhite/20 font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3rem] md:tracking-[0.5rem]">
-                Archive // Batch 01
-              </div>
-            </div>
-
-            <div className="portfolio-grid grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-              {photography.map((item, idx) => (
-                <PortfolioItem key={idx} {...item} />
-              ))}
-            </div>
-          </div>
-
-          {/* Videography Section */}
-          <div className="mb-24 md:mb-32">
-            <div className="portfolio-section-title flex flex-col md:flex-row md:justify-between md:items-end mb-8 md:mb-16 gap-4">
-              <h2 className="text-offwhite text-4xl sm:text-5xl md:text-8xl font-sans font-bold tracking-tighter uppercase leading-none">
-                Video<span className="text-signal italic">graphy.</span>
-              </h2>
-              <div className="text-offwhite/40 md:text-offwhite/20 font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3rem] md:tracking-[0.5rem]">
-                Transmission // Live
-              </div>
-            </div>
-
-            <div className="portfolio-grid grid grid-cols-1 gap-4 md:gap-8">
-              {videography.map((item, idx) => (
-                <PortfolioItem key={idx} {...item} onSelect={setSelectedVideo} />
-              ))}
-            </div>
-          </div>
-
-          {/* Corporate Section */}
-          <div className="mb-24 md:mb-32">
-            <div className="portfolio-section-title flex flex-col md:flex-row md:justify-between md:items-end mb-8 md:mb-16 gap-4">
-              <h2 className="text-offwhite text-4xl sm:text-5xl md:text-8xl font-sans font-bold tracking-tighter uppercase leading-none">
-                Corpo<span className="text-signal italic">rate.</span>
-              </h2>
-              <div className="text-offwhite/40 md:text-offwhite/20 font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3rem] md:tracking-[0.5rem]">
-                Commercial // Enterprise
-              </div>
-            </div>
-
-            <div className="portfolio-grid grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-              {corporate.map((item, idx) => (
-                <PortfolioItem key={idx} {...item} onSelect={setSelectedVideo} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-      <Membership />
-    </div>
-  );
-};
-
 const App = () => {
   return (
-    <Router>
-      <ScrollToTop />
-      <main className="relative bg-offwhite selection:bg-signal selection:text-offwhite">
-        <div className="noise-overlay"></div>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/portfolio" element={<PortfolioPage />} />
-        </Routes>
-        <Footer />
-      </main>
-    </Router>
+    <main className="relative bg-offwhite selection:bg-signal selection:text-offwhite">
+      <div className="noise-overlay"></div>
+      <Home />
+    </main>
   );
 };
 
