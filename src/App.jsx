@@ -16,6 +16,7 @@ import {
   Calendar,
   Menu,
   X,
+  ExternalLink,
 } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -1197,6 +1198,7 @@ const PortfolioItem = ({
   video,
   span = "col-span-1",
   onSelect,
+  albumUrl,
 }) => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -1263,9 +1265,22 @@ const PortfolioItem = ({
         <div className="text-signal font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3em] mb-2 md:mb-4 opacity-100 translate-y-0 md:opacity-0 md:group-hover:opacity-100 transform md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500">
           {category}
         </div>
-        <h3 className="text-offwhite text-xl md:text-3xl font-sans font-bold uppercase tracking-tighter transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500 delay-75 pr-4 truncate whitespace-normal line-clamp-2 md:line-clamp-none">
-          {title}
-        </h3>
+        <div className="flex items-end justify-between gap-4">
+          <h3 className="text-offwhite text-xl md:text-3xl font-sans font-bold uppercase tracking-tighter transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500 delay-75 pr-4 truncate whitespace-normal line-clamp-2 md:line-clamp-none">
+            {title}
+          </h3>
+          {albumUrl && (
+            <a
+              href={albumUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="pointer-events-auto flex-shrink-0 flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-offwhite font-mono text-[9px] md:text-[10px] uppercase tracking-widest hover:bg-signal hover:border-signal hover:text-dark transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0"
+            >
+              See Full Album <ExternalLink size={12} />
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -1325,13 +1340,20 @@ const Home = () => {
       category: "Marc Photography",
       image: "/photog-3.jpg",
       span: "full",
+      albumUrl: "https://www.facebook.com/share/p/17zVmaBbbt/",
     },
     {
       title: "G E M S I + I A N",
       category: "Marc Photography",
       image: "/photog-1.jpg",
+      albumUrl: "https://www.facebook.com/share/p/1BbddmhQno/",
     },
-    { title: "S T E V E N", category: "Forever Kids", image: "/photog-2.jpg" },
+    {
+      title: "S T E V E N",
+      category: "Forever Kids",
+      image: "/photog-2.jpg",
+      albumUrl: "https://www.facebook.com/share/p/1AeWJAsTVF/",
+    },
   ];
 
   const videography = [
