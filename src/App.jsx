@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Camera, Video, MessageSquare, Play, Pause, ArrowRight, Instagram, Facebook, Mail, Clock, LayoutGrid, Calendar, Menu, X } from 'lucide-react';
 
