@@ -1223,7 +1223,7 @@ const PortfolioItem = ({
           onSelect(video);
         }
       }}
-      className={`portfolio-card group relative overflow-hidden rounded-[2rem] bg-dark aspect-[4/5] md:aspect-auto ${span === "full" ? "md:col-span-2 h-[400px] md:h-[500px]" : "h-[350px] md:h-[600px]"} ${video ? "video-card-hover cursor-none" : ""}`}
+      className={`portfolio-card group relative overflow-hidden rounded-[2rem] bg-dark w-full md:aspect-auto ${span === "full" ? "col-span-1 md:col-span-2 h-[300px] md:h-[500px]" : "h-[300px] md:h-[600px]"} ${video ? "video-card-hover cursor-none" : ""}`}
     >
       <div className="absolute inset-0 z-0">
         {video ? (
@@ -1265,7 +1265,7 @@ const PortfolioItem = ({
         <div className="text-signal font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3em] mb-2 md:mb-4 opacity-100 translate-y-0 md:opacity-0 md:group-hover:opacity-100 transform md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500">
           {category}
         </div>
-        <div className="flex items-end justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 md:gap-4">
           <h3 className="text-offwhite text-xl md:text-3xl font-sans font-bold uppercase tracking-tighter transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500 delay-75 pr-4 truncate whitespace-normal line-clamp-2 md:line-clamp-none">
             {title}
           </h3>
@@ -1275,7 +1275,7 @@ const PortfolioItem = ({
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="pointer-events-auto flex-shrink-0 flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-offwhite font-mono text-[9px] md:text-[10px] uppercase tracking-widest hover:bg-signal hover:border-signal hover:text-dark transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0"
+              className="pointer-events-auto flex-shrink-0 self-start md:self-auto flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-offwhite font-mono text-[9px] md:text-[10px] uppercase tracking-widest hover:bg-signal hover:border-signal hover:text-dark transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0"
             >
               See Full Album <ExternalLink size={12} />
             </a>
